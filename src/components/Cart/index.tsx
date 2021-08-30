@@ -23,6 +23,13 @@ export function Cart() {
       }, 0)
     );
 
+  const freight = cart.reduce((sumTotal, product) => { return sumTotal += (product.amount * product.price) }, 0) > 250
+    ? formatPrice(0)
+    : formatPrice(cart.reduce((sumTotal, product) => {
+      return sumTotal += (10 * product.amount);
+    }, 0)
+  );
+
   function handleProductIncrement(product: Product) {
     updateProductAmount({ productId: product.id, amount: product.amount + 1 });
   }
@@ -49,7 +56,7 @@ export function Cart() {
         </thead>
         <tbody>
           {cartFormatted.map(product => (
-            <tr key={product.id} data-testid="product">
+            <tr key={product.id}>
               <td>
                 <Image src={product.image} alt={product.name} width={100} height={100} />
               </td>
@@ -61,7 +68,6 @@ export function Cart() {
                 <div>
                   <button
                     type="button"
-                    data-testid="decrement-product"
                     disabled={product.amount <= 1}
                     onClick={() => handleProductDecrement(product)}
                   >
@@ -69,13 +75,11 @@ export function Cart() {
                   </button>
                   <input
                     type="text"
-                    data-testid="product-amount"
                     readOnly
                     value={product.amount}
                   />
                   <button
                     type="button"
-                    data-testid="increment-product"
                     onClick={() => handleProductIncrement(product)}
                   >
                     <MdAddCircleOutline size={20} />
@@ -88,7 +92,6 @@ export function Cart() {
               <td>
                 <button
                   type="button"
-                  data-testid="remove-product"
                   onClick={() => handleRemoveProduct(product.id)}
                 >
                   <MdDelete size={20} />
@@ -105,6 +108,8 @@ export function Cart() {
         <Total>
           <span>TOTAL</span>
           <strong>{total}</strong>
+          <span>FRETE</span>
+          <strong>{freight}</strong>
         </Total>
       </footer>
     </Container>
